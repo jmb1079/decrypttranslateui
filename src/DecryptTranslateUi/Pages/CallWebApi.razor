@@ -1,0 +1,61 @@
+@page "/call-web-api"
+@using System.Text.Json
+@using System.Text.Json.Serialization;
+@inject IHttpClientFactory ClientFactory
+
+<h1>Call web API from a Blazor Server Razor component</h1>
+
+@if (getCasesError)
+{
+    <p>Unable to get cases from decrypttranslateapi. Please try again later.</p>
+}
+else
+{
+    <ul>
+        @foreach (var myCase in cases)
+        {
+            <li>@myCase.Name (@myCase.Organization)</li>
+        }
+    </ul>
+}
+
+@code {
+    private IEnumerable<Case> cases = Array.Empty<Case>();
+    private bool getCasesError;
+    private bool shouldRender;
+
+    protected override bool ShouldRender() => shouldRender;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get,
+            "https://decrypttranslateapi.azurewebsites.net/api/case");
+        request.Headers.Add("Accept", "application/vnd.github.v3+json");
+        request.Headers.Add("User-Agent", "HttpClientFactory-Sample");
+
+        var client = ClientFactory.CreateClient();
+
+        var response = await client.SendAsync(request);
+
+        if (response.IsSuccessStatusCode)
+        {
+            using var responseStream = await response.Content.ReadAsStreamAsync();
+            cases = await JsonSerializer.DeserializeAsync
+                <IEnumerable<Case>>(responseStream);
+        }
+        else
+        {
+            getCasesError = true;
+        }
+
+        shouldRender = true;
+    }
+
+    public class Case
+    {
+        [JsonPropertyName("userId")]
+        public string Name { get; set; }
+        [JsonPropertyName("organization")]
+        public string Organization { get; set; }
+    }
+}
