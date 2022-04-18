@@ -10,12 +10,14 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using DecryptTranslateUi.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 
@@ -30,12 +32,15 @@ namespace DecryptTranslateUi.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
 
+        private readonly RoleManager<IdentityRole> _roleManager;
+
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -43,6 +48,7 @@ namespace DecryptTranslateUi.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _roleManager = roleManager;
         }
 
         /// <summary>
@@ -97,6 +103,26 @@ namespace DecryptTranslateUi.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            [Required]
+            [Display(Name = "Organization")]
+            public string Organization { get; set; }
+
+        }
+        [BindProperty]
+        public List<SelectListItem> Organizations
+        {
+            get
+            {
+                List<SelectListItem> organizations = new List<SelectListItem>();
+                organizations.Add(new SelectListItem { Value = "", Text = "Select Organization" });
+                var orgList = (new OrganizationService()).GetAllOrganizationsAsync().Result;
+                foreach (Organization org in orgList)
+                {
+                    organizations.Add(new SelectListItem { Value = org.Id.ToString(), Text = org.Name});
+                }
+                return organizations;
+            }
         }
 
 
@@ -116,11 +142,17 @@ namespace DecryptTranslateUi.Areas.Identity.Pages.Account
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+
+                    IdentityRole role = await _roleManager.FindByIdAsync(Input.Organization);
+                    Console.WriteLine(role.Name);
+                    Console.WriteLine(role.NormalizedName);
+                    result = await _userManager.AddToRoleAsync(user, role.NormalizedName);
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
