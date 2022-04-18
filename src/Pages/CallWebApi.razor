@@ -30,8 +30,6 @@ else
     {
         var request = new HttpRequestMessage(HttpMethod.Get,
             "https://decrypttranslateapi.azurewebsites.net/api/case");
-        request.Headers.Add("Accept", "application/vnd.github.v3+json");
-        request.Headers.Add("User-Agent", "HttpClientFactory-Sample");
 
         var client = ClientFactory.CreateClient();
 
@@ -40,8 +38,7 @@ else
         if (response.IsSuccessStatusCode)
         {
             using var responseStream = await response.Content.ReadAsStreamAsync();
-            cases = await JsonSerializer.DeserializeAsync
-                <IEnumerable<Case>>(responseStream);
+            cases = await JsonSerializer.DeserializeAsync<IEnumerable<Case>>(responseStream);
         }
         else
         {
@@ -53,9 +50,13 @@ else
 
     public class Case
     {
+        [JsonPropertyName("number")]
+        public int CaseNumber { get; set; }
+
         [JsonPropertyName("userId")]
         public string Name { get; set; }
+
         [JsonPropertyName("organization")]
-        public string Organization { get; set; }
+        public int Organization { get; set; }
     }
 }
