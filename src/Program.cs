@@ -27,7 +27,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 builder.Services.AddTransient<OrganizationService>();
-
+builder.Services.AddTransient<CaseService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

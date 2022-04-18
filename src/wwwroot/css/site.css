@@ -62,3 +62,24 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+.ul {
+    list-style: none;background-color: blue; padding: 0px; padding-top: 2px; padding-bottom: 2px;
+}   
+
+.li {
+    padding: 5px; background-color: lightgray; margin: 10px; font-size: large;
+}
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 10fr 1fr;
+    gap: 20px;
+}
+
+.add-button {
+    float: right;
+    font-size: 36px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    line-height: 40px;
+}

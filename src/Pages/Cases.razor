@@ -1,0 +1,53 @@
+@page "/cases"
+@using System.Text.Json
+@using System.Text.Json.Serialization;
+@using Data
+@inject IHttpClientFactory ClientFactory
+@inject CaseService CaseService
+
+<div class ="container">
+    <div class="grid-container">
+        <div class="grid-child">
+            <h3>Cases</h3>
+        </div>
+        <div class="grid-child" >
+        </div>
+        <div class="grid-child" >
+            <button class="btn btn-success m-1 add-button">+</button>
+        </div>
+    </div>
+</div>
+@if (getCasesError)
+{
+    <p>Unable to get cases from decrypttranslateapi. Please try again later.</p>
+}
+else
+{
+    
+        @foreach (Case myCase in cases)
+        {
+            <div class="card m-3">
+                <div class="card-header">
+                    <h3> @myCase.CaseNumber</h3>
+                </div>
+                <div class="card-body">
+                    <p>@myCase.Name</p>
+                </div>
+            </div>
+        }
+}
+
+@code {
+    private IEnumerable<Case> cases = Array.Empty<Case>();
+    private bool getCasesError;
+    private bool shouldRender;
+
+    protected override bool ShouldRender() => shouldRender;
+
+    protected override async Task OnInitializedAsync()
+    {
+        cases = (await CaseService.GetAllCasesAsync());
+
+        shouldRender = true;
+    }
+}
