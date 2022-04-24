@@ -1,3 +1,4 @@
+using System.Configuration;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Options;
 using SendGrid;
@@ -8,12 +9,15 @@ namespace DecryptTranslateUi.Services.Email;
 public class EmailSender : IEmailSender
 {
     private readonly ILogger _logger;
+    private readonly IConfiguration _configuration;
 
     public EmailSender(IOptions<AuthMessageSenderOptions> optionsAccessor,
-                       ILogger<EmailSender> logger)
+                       ILogger<EmailSender> logger,
+                       IConfiguration configuration)
     {
         Options = optionsAccessor.Value;
         _logger = logger;
+        _configuration = configuration;
     }
 
     public AuthMessageSenderOptions Options { get; } //Set with Secret Manager.
@@ -29,10 +33,10 @@ public class EmailSender : IEmailSender
 
     public async Task Execute(string apiKey, string subject, string message, string toEmail)
     {
-        var client = new SendGridClient(apiKey);
+        var client = new SendGridClient(_configuration.GetValue<string>("SendGrid:ApiKey"));
         var msg = new SendGridMessage()
         {
-            From = new EmailAddress("jmb1079@psu.edu", "Password Recovery"),
+            From = new EmailAddress(_configuration.GetValue<string>("SendGrid:FromAddress"), _configuration.GetValue<string>("SendGrid:Subject")),
             Subject = subject,
             PlainTextContent = message,
             HtmlContent = message
