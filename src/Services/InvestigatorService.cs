@@ -3,21 +3,21 @@ using System.Net.Http;
 
 namespace DecryptTranslateUi.Data;
 
-public class OrganizationService
+public class InvestigatorService
 {
     private readonly HttpClient _httpClient;
     private IConfiguration _configuration;
 
-    public OrganizationService()
+    public InvestigatorService()
     {
         _httpClient = new HttpClient();
         _httpClient.BaseAddress = new Uri("https://dtlawapi.azurewebsites.net");
     }
 
-    public async Task<IEnumerable<Organization>> GetAllOrganizationsAsync()
+    public async Task<IEnumerable<Investigator>> GetAllInvestigatorsAsync()
     {
-        IEnumerable<Organization> organizations = Enumerable.Empty<Organization>();
-        var request = new HttpRequestMessage(HttpMethod.Get,"/api/organization");
+        IEnumerable<Investigator> organizations = Enumerable.Empty<Investigator>();
+        var request = new HttpRequestMessage(HttpMethod.Get,"/api/investigator");
         Console.WriteLine(request.RequestUri);
         var response = await _httpClient.SendAsync(request);
         Console.WriteLine(response.IsSuccessStatusCode);
@@ -25,7 +25,7 @@ public class OrganizationService
         {
             using var responseStream = await response.Content.ReadAsStreamAsync();
             organizations = await JsonSerializer.DeserializeAsync
-                <IEnumerable<Organization>>(responseStream) ??  Enumerable.Empty<Organization>();
+                <IEnumerable<Investigator>>(responseStream) ??  Enumerable.Empty<Investigator>();
         }
         return organizations;
     }

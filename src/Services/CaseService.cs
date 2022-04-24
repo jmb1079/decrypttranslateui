@@ -11,14 +11,13 @@ public class CaseService
     public CaseService()
     {
         _httpClient = new HttpClient();
-        //_httpClient.BaseAddress = new Uri("https://decrypttranslateapi.azurewebsites.net/api/case");
+        _httpClient.BaseAddress = new Uri("https://dtlawapi.azurewebsites.net");
     }
 
     public async Task<IEnumerable<Case>> GetAllCasesAsync()
     {
         IEnumerable<Case> cases = Enumerable.Empty<Case>();
-        var request = new HttpRequestMessage(HttpMethod.Get,"https://decrypttranslateapi.azurewebsites.net/api/case");
-        Console.WriteLine(request.RequestUri);
+        var request = new HttpRequestMessage(HttpMethod.Get,"/api/case");
         var response = await _httpClient.SendAsync(request);
         if (response.IsSuccessStatusCode)
         {
@@ -27,5 +26,18 @@ public class CaseService
                 <IEnumerable<Case>>(responseStream) ??  Enumerable.Empty<Case>();
         }
         return cases;
+    }
+
+    public async Task<bool> CreateCase(Case thisCase)
+    {
+        var existingCases = await GetAllCasesAsync();
+        var newCaseRequest = new HttpRequestMessage(HttpMethod.Post, "/api/case");
+        newCaseRequest.Content = new StringContent(JsonSerializer.Serialize(thisCase));
+        var response = await _httpClient.SendAsync(newCaseRequest);
+        if(response.IsSuccessStatusCode)
+        {
+            return true;
+        }
+        return false;
     }
 }

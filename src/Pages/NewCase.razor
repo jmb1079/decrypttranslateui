@@ -1,0 +1,101 @@
+@page "/case/new"
+@using Data
+@using System.ComponentModel.DataAnnotations
+@using System.Text.Json;
+@using System.Net.Http;
+@inject OrganizationService organizationService
+@inject InvestigatorService investigatorService
+@inject CaseService caseService
+
+<h2>New Case</h2>
+
+<EditForm Model="@input" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <p>
+        <label>
+            CaseNumber:
+            <InputText @bind-Value="input.CaseNumber" />
+        </label>
+    </p>
+    <p>
+        <label>
+            Primary Investigator:
+            <InputSelect @bind-Value="input.PrimaryInvestigator">
+                @foreach (var person in Investigators)
+                {
+                    <option value="@person.Id">@person.Name</option>
+                }
+            </InputSelect>
+        </label>
+    </p>
+    <p>
+        <label>
+            Organization:
+            <InputSelect @bind-Value="input.Organization">
+                @foreach (var org in Organizations)
+                {
+                    <option value="@org.Id">@org.Name</option>
+                }
+            </InputSelect>
+        </label>
+    </p>
+    <button type="submit">Submit</button>
+</EditForm>
+
+@code {
+
+    private List<Organization> organizations = new List<Organization>();
+        private List<Investigator> investigators = new List<Investigator>();
+
+    public InputModel input = new InputModel();
+
+    public class InputModel
+    {
+        [Required]
+        [RegularExpression(@"^\d+$")]
+        public string? CaseNumber;
+
+        [Required]
+        public string? PrimaryInvestigator;
+
+        [Required]
+        public int Organization;
+        
+    }
+
+    public List<Investigator> Investigators
+        {
+            get
+            {
+                return investigators;
+            }
+        }
+    public List<Organization> Organizations
+        {
+            get
+            {
+               return organizations;
+            }
+        }
+
+ protected override async Task OnInitializedAsync()
+    {
+        organizations = (await organizationService.GetAllOrganizationsAsync()).ToList();
+        investigators = (await investigatorService.GetAllInvestigatorsAsync()).ToList();
+    }
+
+    private async void HandleValidSubmit()
+    {
+        Console.WriteLine("Submitted new case");
+        Case thisCase = new Case
+        {
+            CaseNumber = int.Parse(input.CaseNumber),
+            Organization = input.Organization,
+            PrimaryInvestigator = input.PrimaryInvestigator
+        };
+        var result = await caseService.CreateCase(thisCase);
+        Console.WriteLine(result);
+    }
+}

@@ -23,13 +23,18 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
-builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddHttpClient();
+builder.Services.AddLogging(logging=>
+{
+    logging.AddConsole();
+    logging.AddDebug();
+});
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 builder.Services.AddTransient<OrganizationService>();
 builder.Services.AddTransient<CaseService>();
 builder.Services.AddTransient<NavigationHelper>();
+builder.Services.AddTransient<InvestigatorService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
