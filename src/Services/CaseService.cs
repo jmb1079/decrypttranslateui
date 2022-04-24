@@ -28,16 +28,12 @@ public class CaseService
         return cases;
     }
 
-    public async Task<bool> CreateCase(Case thisCase)
+    public async Task<HttpResponseMessage> CreateCase(Case thisCase)
     {
         var existingCases = await GetAllCasesAsync();
         var newCaseRequest = new HttpRequestMessage(HttpMethod.Post, "/api/case");
         newCaseRequest.Content = new StringContent(JsonSerializer.Serialize(thisCase));
         var response = await _httpClient.SendAsync(newCaseRequest);
-        if(response.IsSuccessStatusCode)
-        {
-            return true;
-        }
-        return false;
+        return response;
     }
 }

@@ -13,7 +13,12 @@ namespace DecryptTranslateUi.Services
 
         public void NavigateTo(string page)
         {
-            _navigationManager.NavigateTo(page);
+            this.NavigateTo(page, false);
+        }
+
+        public void NavigateTo(string page, bool reload)
+        {
+            _navigationManager.NavigateTo(page, reload);
         }
     }
 }

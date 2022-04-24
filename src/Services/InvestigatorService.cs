@@ -16,7 +16,7 @@ public class InvestigatorService
 
     public async Task<IEnumerable<Investigator>> GetAllInvestigatorsAsync()
     {
-        IEnumerable<Investigator> organizations = Enumerable.Empty<Investigator>();
+        IEnumerable<Investigator> investigators = Enumerable.Empty<Investigator>();
         var request = new HttpRequestMessage(HttpMethod.Get,"/api/investigator");
         Console.WriteLine(request.RequestUri);
         var response = await _httpClient.SendAsync(request);
@@ -24,9 +24,9 @@ public class InvestigatorService
         if (response.IsSuccessStatusCode)
         {
             using var responseStream = await response.Content.ReadAsStreamAsync();
-            organizations = await JsonSerializer.DeserializeAsync
+            investigators = await JsonSerializer.DeserializeAsync
                 <IEnumerable<Investigator>>(responseStream) ??  Enumerable.Empty<Investigator>();
         }
-        return organizations;
+        return investigators;
     }
 }

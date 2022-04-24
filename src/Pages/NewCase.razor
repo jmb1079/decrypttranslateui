@@ -1,11 +1,13 @@
 @page "/case/new"
 @using Data
 @using System.ComponentModel.DataAnnotations
+@using DecryptTranslateUi.Services
 @using System.Text.Json;
 @using System.Net.Http;
 @inject OrganizationService organizationService
 @inject InvestigatorService investigatorService
 @inject CaseService caseService
+@inject NavigationHelper navHelper
 
 <h2>New Case</h2>
 
@@ -88,7 +90,6 @@
 
     private async void HandleValidSubmit()
     {
-        Console.WriteLine("Submitted new case");
         Case thisCase = new Case
         {
             CaseNumber = int.Parse(input.CaseNumber),
@@ -96,6 +97,13 @@
             PrimaryInvestigator = input.PrimaryInvestigator
         };
         var result = await caseService.CreateCase(thisCase);
-        Console.WriteLine(result);
+        if (result.IsSuccessStatusCode)
+        {
+            navHelper.NavigateTo("/");
+        }
+        else
+        {
+            navHelper.NavigateTo("/case/new", true);
+        }
     }
 }
