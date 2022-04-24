@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using DecryptTranslateUi.Areas.Identity;
 using DecryptTranslateUi.Data;
+using DecryptTranslateUi.Services;
 using DecryptTranslateUi.Services.Email;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +29,7 @@ builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 builder.Services.AddTransient<OrganizationService>();
 builder.Services.AddTransient<CaseService>();
+builder.Services.AddTransient<NavigationHelper>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

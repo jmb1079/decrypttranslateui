@@ -2,52 +2,65 @@
 @using System.Text.Json
 @using System.Text.Json.Serialization;
 @using Data
+@using DecryptTranslateUi.Services;
 @inject IHttpClientFactory ClientFactory
 @inject CaseService CaseService
+@inject NavigationHelper _navHelper
 
-<div class ="container">
-    <div class="grid-container">
-        <div class="grid-child">
-            <h3>Cases</h3>
-        </div>
-        <div class="grid-child" >
-        </div>
-        <div class="grid-child" >
-            <button class="btn btn-success m-1 add-button">+</button>
-        </div>
-    </div>
-</div>
+
+
 @if (getCasesError)
 {
     <p>Unable to get cases from decrypttranslateapi. Please try again later.</p>
 }
 else
 {
-    
-        @foreach (Case myCase in cases)
-        {
-            <div class="card m-3">
-                <div class="card-header">
-                    <h3> @myCase.CaseNumber</h3>
-                </div>
-                <div class="card-body">
-                    <p>@myCase.Name</p>
-                </div>
+    <div class="container">
+        <div class="grid-container">
+            <div class="grid-child">
+                <h3>Cases</h3>
             </div>
-        }
+            <div class="grid-child">
+            </div>
+            <div class="grid-child">
+                <button @onclick="AddCaseHandler" class="btn btn-success m-1 add-button">+</button>
+            </div>
+        </div>
+    </div>
+    @foreach (Case myCase in cases)
+    {
+        <div class="card m-3" @onclick="() => NavigateToCase(myCase.CaseNumber)">
+            <div class="card-header">
+                <h3> @myCase.CaseNumber</h3>
+            </div>
+            <div class="card-body">
+                <p>@myCase.Name</p>
+            </div>
+        </div>
+    }
 }
 
 @code {
     private IEnumerable<Case> cases = Array.Empty<Case>();
     private bool getCasesError;
     private bool shouldRender;
+    private string? newCase;
 
     protected override bool ShouldRender() => shouldRender;
 
     protected override async Task OnInitializedAsync()
     {
         cases = (await CaseService.GetAllCasesAsync());
-
         shouldRender = true;
+    }
+
+    private void AddCaseHandler()
+    {
+        _navHelper.NavigateTo("/case/new");
+    }
+    private void NavigateToCase(int caseNumber)
+    {
+        var page = String.Format("/case/{0}",caseNumber.ToString());
+        _navHelper.NavigateTo(page);
     }
 }
