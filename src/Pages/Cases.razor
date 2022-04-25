@@ -1,8 +1,8 @@
 @page "/cases"
 @using System.Text.Json
-@using System.Text.Json.Serialization;
+@using System.Text.Json.Serialization
 @using Data
-@using DecryptTranslateUi.Services;
+@using DecryptTranslateUi.Services
 @inject IHttpClientFactory ClientFactory
 @inject CaseService CaseService
 @inject NavigationHelper _navHelper
@@ -51,6 +51,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         cases = (await CaseService.GetAllCasesAsync());
+        
         shouldRender = true;
     }
 

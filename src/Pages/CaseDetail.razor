@@ -1,9 +1,33 @@
-@page "/casedetail"
+@page "/case/{Id:int}"
+@using Data
+@inject CaseService CaseService
+@inject InvestigatorService InvestigatorService
+@inject OrganizationService OrganizationService
 
-<PageTitle>Case</PageTitle>
+<PageTitle>Case @Id</PageTitle>
 
-<h1>Case</h1>
+<h3>Case @Id</h3>
+<p>Primary Investigator: @primaryInvestigator.Name</p>
+<p>Organization: @organization.Name</p>
 
-@code {
+@code 
+{
+    [Parameter]
+    public int Id { get; set; }
+    private bool shouldRender;
+    private IEnumerable<Case> cases = Array.Empty<Case>();
+    private Case thisCase = new Case();
+    private Investigator primaryInvestigator = new Investigator();
+    private Organization organization = new Organization();
+    protected override bool ShouldRender() => shouldRender;
+
+    protected override async Task OnInitializedAsync()
+    {
+        thisCase = (await CaseService.GetCaseByNumber(Id));
+        primaryInvestigator = (await InvestigatorService.GetInvestigatorById(thisCase.PrimaryInvestigator));
+        Console.WriteLine(thisCase.Organization);
+        organization = (await OrganizationService.GetOrganizationById(thisCase.Organization));
+        shouldRender = true;
+    }
 
 }

@@ -29,4 +29,16 @@ public class InvestigatorService
         }
         return investigators;
     }
+
+    public async Task<Investigator> GetInvestigatorById(string id)
+    {
+        var investigator = new Investigator();
+        var investigatorRequest = new HttpRequestMessage(HttpMethod.Get, String.Format("/api/investigator/{0}", id));
+        var response = await _httpClient.SendAsync(investigatorRequest);
+        using (var responseStream = await response.Content.ReadAsStreamAsync())
+        {
+            investigator = await JsonSerializer.DeserializeAsync<Investigator>(responseStream) ?? investigator;
+        }
+        return investigator;
+    }
 }

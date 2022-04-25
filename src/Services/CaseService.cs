@@ -39,4 +39,17 @@ public class CaseService
         Console.WriteLine(response.StatusCode);
         return response;
     }
+
+    public async Task<Case> GetCaseByNumber(int number)
+    {
+        var thisCase = new Case();
+        var caseRequest = new HttpRequestMessage(HttpMethod.Get, String.Format("/api/case/{0}", number));
+        var response = await _httpClient.SendAsync(caseRequest);
+        using (var responseStream = await response.Content.ReadAsStreamAsync())
+        {
+            thisCase = await JsonSerializer.DeserializeAsync<Case>(responseStream) ?? thisCase;
+        }
+        return thisCase;
+    }
+
 }

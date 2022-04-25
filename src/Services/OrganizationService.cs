@@ -29,4 +29,16 @@ public class OrganizationService
         }
         return organizations;
     }
+
+    public async Task<Organization> GetOrganizationById(int id)
+    {
+        var organization = new Organization();
+        var organizationRequest = new HttpRequestMessage(HttpMethod.Get, String.Format("/api/organization/{0}", id));
+        var response = await _httpClient.SendAsync(organizationRequest);
+        using (var responseStream = await response.Content.ReadAsStreamAsync())
+        {
+            organization = await JsonSerializer.DeserializeAsync<Organization>(responseStream) ?? organization;
+        }
+        return organization;
+    }
 }
