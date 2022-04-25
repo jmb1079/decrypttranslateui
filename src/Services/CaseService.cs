@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using DecryptTranslateUi.Data;
 
@@ -32,8 +33,10 @@ public class CaseService
     {
         var existingCases = await GetAllCasesAsync();
         var newCaseRequest = new HttpRequestMessage(HttpMethod.Post, "/api/case");
-        newCaseRequest.Content = new StringContent(JsonSerializer.Serialize(thisCase));
+        newCaseRequest.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+        newCaseRequest.Content = new StringContent(JsonSerializer.Serialize(thisCase), Encoding.UTF8, "application/json");
         var response = await _httpClient.SendAsync(newCaseRequest);
+        Console.WriteLine(response.StatusCode);
         return response;
     }
 }
