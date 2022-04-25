@@ -5,12 +5,23 @@
 @inject OrganizationService OrganizationService
 
 <PageTitle>Case @Id</PageTitle>
+<div class="container">
+    <div class="case-container">
+        <div class="grid-child">
+            <h3>Case @Id</h3>
+            <p>Primary Investigator: @primaryInvestigator.Name</p>
+            <p>Organization: @organization.Name</p>
+        </div>
+        <div class="grid-child">
+        </div>
+        <div class="grid-child">
+            <button @onclick="UploadImageHandler" class="btn btn-success m-1">Upload Image</button>
+        </div>
+    </div>
+</div>
 
-<h3>Case @Id</h3>
-<p>Primary Investigator: @primaryInvestigator.Name</p>
-<p>Organization: @organization.Name</p>
 
-@code 
+@code
 {
     [Parameter]
     public int Id { get; set; }
@@ -30,4 +41,8 @@
         shouldRender = true;
     }
 
+    private void UploadImageHandler()
+    {
+        Console.WriteLine("Upload Image");
+    }
 }
