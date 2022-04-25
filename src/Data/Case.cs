@@ -7,7 +7,7 @@ namespace DecryptTranslateUi.Data
         [JsonPropertyName("number")]
         public int CaseNumber { get; set; }
 
-        [JsonPropertyName("userId")]
+        [JsonPropertyName("primaryInvestigator")]
         public string PrimaryInvestigator { get; set; } = string.Empty;
 
         [JsonPropertyName("organization")]
