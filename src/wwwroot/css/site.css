@@ -76,6 +76,12 @@ a, .btn-link {
     gap: 20px;
 }
 
+.case-container {
+    display: grid;
+    grid-template-columns: 50fr 10fr 1fr;
+    gap: 20px;
+}
+
 .add-button {
     float: right;
     font-size: 36px;
