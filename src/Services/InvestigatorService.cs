@@ -18,9 +18,7 @@ public class InvestigatorService
     {
         IEnumerable<Investigator> investigators = Enumerable.Empty<Investigator>();
         var request = new HttpRequestMessage(HttpMethod.Get,"/api/investigator");
-        Console.WriteLine(request.RequestUri);
         var response = await _httpClient.SendAsync(request);
-        Console.WriteLine(response.IsSuccessStatusCode);
         if (response.IsSuccessStatusCode)
         {
             using var responseStream = await response.Content.ReadAsStreamAsync();

@@ -36,7 +36,6 @@ public class CaseService
         newCaseRequest.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
         newCaseRequest.Content = new StringContent(JsonSerializer.Serialize(thisCase), Encoding.UTF8, "application/json");
         var response = await _httpClient.SendAsync(newCaseRequest);
-        Console.WriteLine(response.StatusCode);
         return response;
     }
 

@@ -18,9 +18,7 @@ public class OrganizationService
     {
         IEnumerable<Organization> organizations = Enumerable.Empty<Organization>();
         var request = new HttpRequestMessage(HttpMethod.Get,"/api/organization");
-        Console.WriteLine(request.RequestUri);
         var response = await _httpClient.SendAsync(request);
-        Console.WriteLine(response.IsSuccessStatusCode);
         if (response.IsSuccessStatusCode)
         {
             using var responseStream = await response.Content.ReadAsStreamAsync();

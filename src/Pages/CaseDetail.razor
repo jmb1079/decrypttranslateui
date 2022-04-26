@@ -6,16 +6,20 @@
 
 <PageTitle>Case @Id</PageTitle>
 <div class="container">
+    
     <div class="case-container">
         <div class="grid-child">
             <h3>Case @Id</h3>
             <p>Primary Investigator: @primaryInvestigator.Name</p>
             <p>Organization: @organization.Name</p>
+            <button @onclick="UploadImageSectionHandler" class="btn btn-primary m-1">@ButtonText</button>
+            <div hidden="@HideUpload">
+                <InputFile></InputFile>
+            </div>
         </div>
         <div class="grid-child">
         </div>
         <div class="grid-child">
-            <button @onclick="UploadImageHandler" class="btn btn-success m-1">Upload Image</button>
         </div>
     </div>
 </div>
@@ -31,18 +35,26 @@
     private Investigator primaryInvestigator = new Investigator();
     private Organization organization = new Organization();
     protected override bool ShouldRender() => shouldRender;
+    private bool HideUpload { get; set; } = true;
+    private string ButtonText 
+    { 
+        get
+        {
+            return HideUpload == true ?  "Upload Image" : "Close Image Upload";
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
         thisCase = (await CaseService.GetCaseByNumber(Id));
         primaryInvestigator = (await InvestigatorService.GetInvestigatorById(thisCase.PrimaryInvestigator));
-        Console.WriteLine(thisCase.Organization);
         organization = (await OrganizationService.GetOrganizationById(thisCase.Organization));
         shouldRender = true;
+        
     }
 
-    private void UploadImageHandler()
+    private void UploadImageSectionHandler()
     {
-        Console.WriteLine("Upload Image");
+        HideUpload = !HideUpload;
     }
 }
