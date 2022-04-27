@@ -35,6 +35,7 @@ builder.Services.AddTransient<OrganizationService>();
 builder.Services.AddTransient<CaseService>();
 builder.Services.AddTransient<NavigationHelper>();
 builder.Services.AddTransient<InvestigatorService>();
+builder.Services.AddTransient<ImageService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

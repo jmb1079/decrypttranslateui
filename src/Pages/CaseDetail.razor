@@ -3,6 +3,7 @@
 @inject CaseService CaseService
 @inject InvestigatorService InvestigatorService
 @inject OrganizationService OrganizationService
+@inject ImageService ImageService
 
 <PageTitle>Case @Id</PageTitle>
 <div class="container">
@@ -14,7 +15,7 @@
             <p>Organization: @organization.Name</p>
             <button @onclick="UploadImageSectionHandler" class="btn btn-primary m-1">@ButtonText</button>
             <div hidden="@HideUpload">
-                <InputFile></InputFile>
+                <InputFile OnChange="@OnInputFileChange"></InputFile>
             </div>
         </div>
         <div class="grid-child">
@@ -56,5 +57,21 @@
     private void UploadImageSectionHandler()
     {
         HideUpload = !HideUpload;
+    }
+
+    private async Task<String> OnInputFileChange(InputFileChangeEventArgs args)
+    {
+        Console.WriteLine(String.Format("Selected File: {0}", args.File.Name));
+        ImageUploadDto imageUpload = new ImageUploadDto
+        {
+            CaseNumber = Id,
+            ContainerName = "FBI",
+            FileName = args.File.Name,
+            Content = BinaryData.FromStream(args.File.OpenReadStream())
+        };
+        var response = await ImageService.UploadImage(imageUpload);
+        if (response.IsSuccessStatusCode)
+        Console.WriteLine(response.Content);
+        return "";
     }
 }
