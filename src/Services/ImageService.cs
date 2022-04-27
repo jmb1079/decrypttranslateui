@@ -44,6 +44,7 @@ public class ImageService
     public async Task<HttpResponseMessage> UploadImage(ImageUploadDto imageUpload)
     {
         var imageUploadRequest = new HttpRequestMessage(HttpMethod.Post, String.Format("/api/image/blob"));
+        imageUploadRequest.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
         imageUploadRequest.Content = new StringContent(JsonSerializer.Serialize(imageUpload), Encoding.UTF8, "application/json");
         Console.WriteLine(imageUploadRequest.Content);
         var response = await _httpClient.SendAsync(imageUploadRequest);
